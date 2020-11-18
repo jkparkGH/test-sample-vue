@@ -6,15 +6,15 @@
       </h1>
       <ul class="navigation-header__route-list">
         <li v-show="!isLogin">
-          <router-link to="/login">Login</router-link>
+          <router-link to="/login"><span>L</span>ogin</router-link>
         </li>
         <li v-show="!isLogin">
           <router-link to="/change-password">
-            Change-password
+            <span>C</span>hange-password
           </router-link>
         </li>
         <li v-show="!isLogin">
-          <router-link to="/mypage">Mypage</router-link>
+          <router-link to="/mypage"><span>M</span>ypage</router-link>
         </li>
       </ul>
     </div>
@@ -42,6 +42,11 @@ $modules: 'navigation-header';
     top: 0;
     left: 0;
     z-index: 3;
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
   }
   &__home {
     padding: 10px;
@@ -59,10 +64,8 @@ $modules: 'navigation-header';
   &__route-list {
     float: right;
     padding-right: 10px;
-    font-size: 16px;
     @media screen and (max-width: 320px) {
       padding-right: 0;
-      font-size: 14px;
     }
     &:after {
       content: '';
@@ -73,9 +76,13 @@ $modules: 'navigation-header';
       float: left;
       a {
         color: #0e0e0e;
-        padding: 15.5px 10px;
+        padding: 14.5px 10px;
         display: inline-block;
+        font-size: 14px;
         font-weight: 600;
+        span {
+          font-size: 18px;
+        }
       }
     }
   }

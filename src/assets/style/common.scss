@@ -1,0 +1,51 @@
+$container: 'router-view-container';
+.#{$container} {
+  padding-top: 100px;
+  padding-left: 20%;
+  h1 {
+    font-size: 28px;
+    padding-bottom: 22px;
+    color: #333;
+  }
+  h3 {
+    font-size: 22px;
+    padding-bottom: 36px;
+    color: #444;
+  }
+}
+
+$buttons: 'btn-common';
+.#{$buttons} {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid #333;
+  &:hover {
+    color: #fff;
+    background-color: #333;
+  }
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+$modules: 'input-default';
+.#{$modules} {
+  width: 280px;
+  padding-bottom: 36px;
+  input {
+    display: block;
+    width: 100%;
+    border-bottom: 2px solid #333;
+    padding: 5px 0;
+    font-size: 16px;
+  }
+  .error-msg {
+    font-size: 12px;
+    margin-top: 6px;
+    color: rgb(185, 60, 60);
+  }
+}
