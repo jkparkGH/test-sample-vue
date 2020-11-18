@@ -6,7 +6,7 @@ import {
   PatchNewPasswordReqData,
   PatchNewPasswordActionParams
 } from '@/store/modules/change-password/interface';
-import AxiosService from '@/service/axios.service';
+import AxiosService from '@/service/axios';
 // import { AxiosResponse } from 'axios';
 
 const ChangePassword: Module<ChangePasswordState, RootState> = {
@@ -20,7 +20,6 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
   },
   getters: {
     stepNumber: (state) => state.stepNumber,
-    issueToken: (state) => state.issueToken,
     remainMiliseconds: (state) => state.remainMiliseconds
   },
   mutations: {
@@ -43,9 +42,8 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
   actions: {
     REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
       return new Promise((resolve, reject) => {
-        AxiosService.get({
-          url: `/api/reset-password?email=${encodeURIComponent(userEmail)}`
-        })
+        AxiosService.instance
+          .get(`/api/reset-password?email=${encodeURIComponent(userEmail)}`)
           .then((response) => {
             commit('setStepNumber', 2);
             commit('setUserEmail', userEmail);
@@ -75,10 +73,8 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
         return;
       } else {
         return new Promise((resolve, reject) => {
-          AxiosService.post({
-            url: `/api/reset-password`,
-            reqData: reqData
-          })
+          AxiosService.instance
+            .post(`/api/reset-password`, reqData)
             .then((response) => {
               commit('setStepNumber', 3);
               commit('setConfirmToken', response.data.confirmToken);
@@ -94,7 +90,10 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
         });
       }
     },
-    PATCH_NEW_PASSWORD({ state }, params: PatchNewPasswordActionParams) {
+    PATCH_NEW_PASSWORD(
+      { commit, state },
+      params: PatchNewPasswordActionParams
+    ) {
       const reqData: PatchNewPasswordReqData = {
         email: state.userEmail,
         confirmToken: state.confirmToken,
@@ -111,9 +110,10 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
         return;
       } else {
         return new Promise((resolve, reject) => {
-          AxiosService.patch({ url: '/api/reset-password', reqData: reqData })
-            .then((res) => {
-              console.log(res);
+          AxiosService.instance
+            .patch('/api/reset-password', reqData)
+            .then(() => {
+              commit('setStepNumber', 1);
               resolve();
             })
             .catch((error) => reject(error));

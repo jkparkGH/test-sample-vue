@@ -3,11 +3,10 @@ import axios, { AxiosInstance } from 'axios';
 const baseURL = 'https://ably-frontend-interview-server.vercel.app';
 
 class AxiosService {
-  private instance: AxiosInstance = axios.create({
+  readonly instance: AxiosInstance = axios.create({
     baseURL: baseURL,
     headers: {
       'Content-Type': 'application/json'
-      // `Authorization: Bearer ${JWT}`
     },
     timeout: 100000
   });
@@ -24,18 +23,6 @@ class AxiosService {
         return Promise.reject(error);
       }
     );
-  }
-
-  public get({ url = '/' }) {
-    return this.instance.get(url);
-  }
-
-  public post({ url = '/', reqData = {} }) {
-    return this.instance.post(url, reqData);
-  }
-
-  public patch({ url = '/', reqData = {} }) {
-    return this.instance.patch(url, reqData);
   }
 }
 

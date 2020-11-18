@@ -10,7 +10,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class ChangePassword extends Vue {
-  RedirectStepInvalid() {
+  redirectStepInvalid() {
     const stepPageInfo: Array<string> = [
       '/change-password',
       '/change-password/auth',
@@ -25,11 +25,12 @@ export default class ChangePassword extends Vue {
   }
 
   @Watch('$route.path')
-  routeUpdate(value: string) {
-    this.RedirectStepInvalid();
+  routeUpdate() {
+    this.redirectStepInvalid();
   }
+
   created() {
-    this.RedirectStepInvalid();
+    this.redirectStepInvalid();
   }
 }
 </script>
