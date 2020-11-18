@@ -18,7 +18,27 @@ const routes: Array<RouteConfig> = [
   {
     path: '/change-password',
     name: 'ChangePassword',
-    component: () => import('../views/ChangePassword.vue')
+    component: () => import('../views/ChangePassword.vue'),
+    children: [
+      {
+        path: '',
+        name: 'RequestEmailAuth',
+        component: () =>
+          import('../components/change-password/RequestEmailAuth.vue')
+      },
+      {
+        path: 'auth',
+        name: 'VerifyEmailAuth',
+        component: () =>
+          import('../components/change-password/VerifyEmailAuth.vue')
+      },
+      {
+        path: 'patch',
+        name: 'PatchNewPassword',
+        component: () =>
+          import('../components/change-password/PatchNewPassword.vue')
+      }
+    ]
   },
   {
     path: '/Mypage',
