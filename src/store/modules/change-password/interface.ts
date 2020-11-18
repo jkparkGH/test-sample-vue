@@ -11,3 +11,15 @@ export interface VerifyEmailAUth {
   authCode: string;
   issueToken: string;
 }
+
+export interface PatchNewPasswordActionParams {
+  userPassword: string;
+  userPasswordComfirm: string;
+}
+
+export interface PatchNewPasswordReqData {
+  email: string;
+  confirmToken: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+}

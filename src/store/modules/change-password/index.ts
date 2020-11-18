@@ -2,10 +2,12 @@ import { Module } from 'vuex';
 import { RootState } from '@/store/root.interface';
 import {
   ChangePasswordState,
-  VerifyEmailAUth
+  VerifyEmailAUth,
+  PatchNewPasswordReqData,
+  PatchNewPasswordActionParams
 } from '@/store/modules/change-password/interface';
 import AxiosService from '@/service/axios.service';
-import { AxiosResponse } from 'axios';
+// import { AxiosResponse } from 'axios';
 
 const ChangePassword: Module<ChangePasswordState, RootState> = {
   namespaced: true,
@@ -39,65 +41,84 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
     }
   },
   actions: {
-    async REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
+    REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
       return new Promise((resolve, reject) => {
         AxiosService.get({
           url: `/api/reset-password?email=${encodeURIComponent(userEmail)}`
         })
           .then((response) => {
-            resolve();
             commit('setStepNumber', 2);
             commit('setUserEmail', userEmail);
             commit('setIssueToken', response.data.issueToken);
             commit('initRemainTime', response.data.remainMiliseconds);
+            resolve();
           })
-          .catch(() => {
-            reject();
-          })
-          .finally(() => {
-            // TODO: delete Block
-            console.log('## TEST REQUEST_EMAIL_AUTH ##');
-            commit('setStepNumber', 2);
-            commit('setUserEmail', userEmail);
-            commit('setIssueToken', 'DummyissueTokenAKDJFOVVZ');
-            commit('initRemainTime', 1000 * 60 * 3);
-          });
+          .catch((error) => reject(error));
+        // .finally(() => {
+        //   // TODO: delete Block
+        //   console.log('## TEST REQUEST_EMAIL_AUTH ##');
+        //   commit('setStepNumber', 2);
+        //   commit('setUserEmail', userEmail);
+        //   commit('setIssueToken', 'DummyissueTokenAKDJFOVVZ');
+        //   commit('initRemainTime', 1000 * 60 * 3);
+        // });
       });
     },
-    async VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
+    VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
       const reqData: VerifyEmailAUth = {
-        email: '',
-        authCode: '',
-        issueToken: ''
+        email: state.userEmail,
+        authCode: authCode,
+        issueToken: state.issueToken
       };
 
-      if (!state.stepNumber || !state.userEmail || !state.issueToken) {
+      if (!reqData.email || !reqData.authCode || !reqData.issueToken) {
         return;
       } else {
-        reqData.email = state.userEmail;
-        reqData.authCode = authCode;
-        reqData.issueToken = state.issueToken;
+        return new Promise((resolve, reject) => {
+          AxiosService.post({
+            url: `/api/reset-password`,
+            reqData: reqData
+          })
+            .then((response) => {
+              commit('setStepNumber', 3);
+              commit('setConfirmToken', response.data.confirmToken);
+              resolve();
+            })
+            .catch((error) => reject(error));
+          // .finally(() => {
+          //   // TODO: delete Block
+          //   console.log('## TEST VERIFY_EMAIL_AUTH ##');
+          //   commit('setStepNumber', 3);
+          //   commit('setConfirmToken', `DummyConfirmTokenKAJOSKJQWEMNF`);
+          // });
+        });
       }
+    },
+    PATCH_NEW_PASSWORD({ state }, params: PatchNewPasswordActionParams) {
+      const reqData: PatchNewPasswordReqData = {
+        email: state.userEmail,
+        confirmToken: state.confirmToken,
+        newPassword: params.userPassword,
+        newPasswordConfirm: params.userPasswordComfirm
+      };
 
-      return new Promise((resolve, reject) => {
-        AxiosService.post({
-          url: `/api/reset-password`,
-          reqData: reqData
-        })
-          .then((response) => {
-            commit('setStepNumber', 3);
-            commit('setConfirmToken', response.data.confirmToken);
-          })
-          .catch(() => {
-            reject();
-          })
-          .finally(() => {
-            // TODO: delete Block
-            console.log('## TEST VERIFY_EMAIL_AUTH ##');
-            commit('setStepNumber', 3);
-            commit('setConfirmToken', `DummyConfirmTokenKAJOSKJQWEMNF`);
-          });
-      });
+      if (
+        !reqData.email ||
+        !reqData.confirmToken ||
+        !reqData.newPassword ||
+        !reqData.newPasswordConfirm
+      ) {
+        return;
+      } else {
+        return new Promise((resolve, reject) => {
+          AxiosService.patch({ url: '/api/reset-password', reqData: reqData })
+            .then((res) => {
+              console.log(res);
+              resolve();
+            })
+            .catch((error) => reject(error));
+        });
+      }
     }
   }
 };

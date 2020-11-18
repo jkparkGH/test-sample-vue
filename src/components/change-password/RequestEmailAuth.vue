@@ -11,7 +11,9 @@
             @keyup="validEmailForInput"
           />
           <p class="error-msg" v-show="userEmailInvalid">
-            {{ `${!userEmail ? '' : '올바른'} 이메일 주소를 입력해 주세요` }}
+            {{
+              `${!userEmail ? '' : '올바른 형식의'} 이메일 주소를 입력해 주세요`
+            }}
           </p>
         </div>
         <button
@@ -57,6 +59,7 @@ export default class RequestEmailAuth extends Vue {
         .then(() => {
           this.$router.push('/change-password/auth');
         })
+        .catch((error) => console.dir(error))
         .finally(() => this.$router.push('/change-password/auth'));
     }
   }

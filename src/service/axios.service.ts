@@ -33,6 +33,10 @@ class AxiosService {
   public post({ url = '/', reqData = {} }) {
     return this.instance.post(url, reqData);
   }
+
+  public patch({ url = '/', reqData = {} }) {
+    return this.instance.patch(url, reqData);
+  }
 }
 
 export default new AxiosService();
