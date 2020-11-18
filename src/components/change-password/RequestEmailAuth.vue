@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h3>| 인증 코드 발급 요청</h3>
+    <h3>Step 1. 인증 코드 발급 요청</h3>
     <div>
       <form @submit.prevent="submitEmailAuth">
         <div class="input-default">
@@ -11,7 +11,7 @@
             @keyup="validEmailForInput"
           />
           <p class="error-msg" v-show="userEmailInvalid">
-            올바른 이메일 주소를 입력해 주세요
+            {{ `${!userEmail ? '' : '올바른'} 이메일 주소를 입력해 주세요` }}
           </p>
         </div>
         <button
@@ -54,7 +54,10 @@ export default class RequestEmailAuth extends Vue {
     if (this.userEmail && !this.userEmailInvalid) {
       this.$store
         .dispatch('ChangePassword/REQUEST_EMAIL_AUTH', this.userEmail)
-        .then(() => this.$router.push('/change-password/auth'));
+        .then(() => {
+          this.$router.push('/change-password/auth');
+        })
+        .finally(() => this.$router.push('/change-password/auth'));
     }
   }
 }

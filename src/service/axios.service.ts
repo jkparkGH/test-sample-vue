@@ -29,6 +29,10 @@ class AxiosService {
   public get({ url = '/' }) {
     return this.instance.get(url);
   }
+
+  public post({ url = '/', reqData = {} }) {
+    return this.instance.post(url, reqData);
+  }
 }
 
 export default new AxiosService();
