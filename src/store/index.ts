@@ -1,15 +1,12 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex, { StoreOptions } from 'vuex';
+import { RootState } from '@/store/root.interface';
+import ChangePassword from '@/store/modules/change-password';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
-export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+const store: StoreOptions<RootState> = {
+  modules: { ChangePassword }
+};
+
+export default new Vuex.Store(store);
