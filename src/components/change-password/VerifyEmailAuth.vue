@@ -77,8 +77,8 @@ export default class VerifyEmailAuth extends Vue {
       this.$store
         .dispatch('ChangePassword/VERIFY_EMAIL_AUTH', this.authCode)
         .then(() => this.$router.push('/change-password/patch'))
-        .catch((error) => console.dir(error))
-        .finally(() => this.$router.push('/change-password/patch'));
+        .catch((error) => console.dir(error));
+      // .finally(() => this.$router.push('/change-password/patch'));
     }
   }
 

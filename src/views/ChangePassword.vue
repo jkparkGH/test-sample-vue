@@ -6,8 +6,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component
-export default class ChangePassword extends Vue {}
+export default class ChangePassword extends Vue {
+  RedirectStepInvalid() {
+    const stepPageInfo: Array<string> = [
+      '/change-password',
+      '/change-password/auth',
+      '/change-password/patch'
+    ];
+    const crrStep: 1 | 2 | 3 = this.$store.getters['ChangePassword/stepNumber'];
+    const crrPath: string = this.$route.path;
+
+    if (crrPath !== stepPageInfo[crrStep - 1]) {
+      return this.$router.push(stepPageInfo[crrStep - 1]);
+    }
+  }
+
+  @Watch('$route.path')
+  routeUpdate(value: string) {
+    this.RedirectStepInvalid();
+  }
+  created() {
+    this.RedirectStepInvalid();
+  }
+}
 </script>

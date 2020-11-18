@@ -59,8 +59,8 @@ export default class RequestEmailAuth extends Vue {
         .then(() => {
           this.$router.push('/change-password/auth');
         })
-        .catch((error) => console.dir(error))
-        .finally(() => this.$router.push('/change-password/auth'));
+        .catch((error) => console.dir(error));
+      // .finally(() => this.$router.push('/change-password/auth'));
     }
   }
 }
