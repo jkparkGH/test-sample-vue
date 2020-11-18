@@ -25,7 +25,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 @Component
 export default class NavigationHeader extends Vue {
-  private isLogin = false;
+  private isLogin: boolean = false;
 }
 </script>
 
