@@ -13,5 +13,11 @@ import LoginComponent from '@/components/login/LoginComponent.vue';
     LoginComponent
   }
 })
-export default class Login extends Vue {}
+export default class Login extends Vue {
+  created() {
+    if (this.$store.getters['UserAuth/isLogin']) {
+      this.$router.push('/');
+    }
+  }
+}
 </script>

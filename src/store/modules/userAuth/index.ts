@@ -10,6 +10,8 @@ const staticUserInfo: UserInfo = {
   lastConnectedAt: null
 };
 
+const tokenStringName = '__testVueAccessToken';
+
 const UserAuth: Module<UserAuthState, RootState> = {
   namespaced: true,
   state: {
@@ -34,6 +36,19 @@ const UserAuth: Module<UserAuthState, RootState> = {
         ...state.userInfo,
         ...params
       };
+    },
+    setCookieAccessToken(state, seconds: number) {
+      document.cookie = `${tokenStringName}=${state.accessToken};path=/;domain=${document.domain};max-age=${seconds};`;
+    },
+    getCookieAccessToken(state) {
+      const value: Array<string> | null = document.cookie.match(
+        `(^|;) ?${tokenStringName}=([^;]*)(;|$)`
+      );
+      const result = value ? unescape(value[2]) : null;
+      if (result) {
+        state.accessToken = result;
+        state.isLogin = true;
+      }
     }
   },
   actions: {
@@ -44,6 +59,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
           .then((response) => {
             commit('setAccessToken', response.data.accessToken);
             commit('setIsLogin', true);
+            commit('setCookieAccessToken', 300);
             resolve();
           })
           .catch((error) => reject(error));
@@ -64,6 +80,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
               commit('setIsLogin', false);
               commit('setAccessToken', '');
               commit('setUserInfo', staticUserInfo);
+              commit('setCookieAccessToken', 1);
               resolve();
             })
             .catch((error) => reject(error));
@@ -71,7 +88,13 @@ const UserAuth: Module<UserAuthState, RootState> = {
       }
     },
     GET_USER_INFO: ({ commit, state }) => {
-      if (state.isLogin && state.accessToken) {
+      if (
+        state.isLogin &&
+        state.accessToken &&
+        !state.userInfo.name &&
+        !state.userInfo.email &&
+        !state.userInfo.profileImage
+      ) {
         AxiosService.instance
           .get('/api/user', {
             headers: { Authorization: `Bearer ${state.accessToken}` }
@@ -81,6 +104,9 @@ const UserAuth: Module<UserAuthState, RootState> = {
           })
           .catch((error) => console.dir(error));
       }
+    },
+    CHECK_USER_COOKIE: ({ commit }) => {
+      commit('getCookieAccessToken');
     }
   }
 };

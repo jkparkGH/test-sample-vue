@@ -81,8 +81,8 @@ export default class UserInfoList extends Vue.extend({
 .user-info-container {
   position: relative;
   button._logout {
-    position: absolute;
-    top: -136px;
+    position: fixed;
+    top: 70px;
     right: 20px;
   }
 }
