@@ -8,15 +8,17 @@ import {
 } from '@/store/modules/change-password/interface';
 import AxiosService from '@/service/axios';
 
+const staticState: ChangePasswordState = {
+  stepNumber: 1,
+  userEmail: '',
+  issueToken: '',
+  remainMillisecond: 0,
+  confirmToken: ''
+};
+
 const ChangePassword: Module<ChangePasswordState, RootState> = {
   namespaced: true,
-  state: {
-    stepNumber: 1,
-    userEmail: '',
-    issueToken: '',
-    remainMillisecond: 0,
-    confirmToken: ''
-  },
+  state: staticState,
   getters: {
     stepNumber: (state) => state.stepNumber,
     remainMillisecond: (state) => state.remainMillisecond
@@ -36,6 +38,16 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
     },
     setConfirmToken(state, confirmToken: string) {
       state.confirmToken = confirmToken;
+    },
+    resetState(state) {
+      state.stepNumber = staticState.stepNumber;
+      state.userEmail = staticState.userEmail;
+      state.issueToken = staticState.issueToken;
+      state.remainMillisecond = staticState.remainMillisecond;
+      state.confirmToken = staticState.confirmToken;
+      // for(let key: string in staticState) {
+      //   state[key] = staticState[key]
+      // }
     }
   },
   actions: {
@@ -104,6 +116,9 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
             .catch((error) => reject(error));
         });
       }
+    },
+    RESET_STATE({ commit }) {
+      commit('resetState');
     }
   }
 };

@@ -42,3 +42,6 @@ ChangePassword.vue: `/change-password`
 Login.vue: `/login`
 
 > LoginComponent.vue
+
+- change-password > 개별 컴포넌트에 Mixin 컴포넌트(EmailForm, PasswordForm) 적용
+- API 요청 함수 개별 쓰로틀링 구현

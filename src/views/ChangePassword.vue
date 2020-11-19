@@ -12,7 +12,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 export default class ChangePassword extends Vue {
   redirectStepInvalid() {
     const stepPageInfo: Array<string> = [
-      '/change-password',
+      '/change-password/request',
       '/change-password/auth',
       '/change-password/patch'
     ];
@@ -31,6 +31,10 @@ export default class ChangePassword extends Vue {
 
   created() {
     this.redirectStepInvalid();
+  }
+
+  destroyed() {
+    this.$store.dispatch('ChangePassword/RESET_STATE');
   }
 }
 </script>

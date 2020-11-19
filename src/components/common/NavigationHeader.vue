@@ -9,7 +9,7 @@
           <router-link to="/login"><span>L</span>ogin</router-link>
         </li>
         <li v-show="!isLogin">
-          <router-link to="/change-password">
+          <router-link to="/change-password/request">
             <span>C</span>hange-password
           </router-link>
         </li>
@@ -50,6 +50,7 @@ $modules: 'navigation-header';
   }
   &__home {
     padding: 10px;
+    padding-top: 11px;
     width: 40px;
     text-align: center;
     display: inline-block;

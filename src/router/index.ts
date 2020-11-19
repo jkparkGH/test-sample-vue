@@ -21,7 +21,7 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/ChangePassword.vue'),
     children: [
       {
-        path: '',
+        path: 'request',
         name: 'RequestEmailAuth',
         component: () =>
           import('../components/change-password/RequestEmailAuth.vue')

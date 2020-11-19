@@ -1,0 +1,17 @@
+$modules: 'input-default';
+.#{$modules} {
+  width: 280px;
+  padding-bottom: 36px;
+  input {
+    display: block;
+    width: 100%;
+    border-bottom: 2px solid #333;
+    padding: 8px 0;
+    font-size: 16px;
+  }
+  .error-msg {
+    font-size: 12px;
+    margin-top: 6px;
+    color: #b93c3c;
+  }
+}
