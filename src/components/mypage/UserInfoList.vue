@@ -50,7 +50,10 @@ export default class UserInfoList extends Vue.extend({
   logoutSubmitProcessing: boolean = false;
 
   logoutSubmit() {
-    if (!this.logoutSubmitProcessing) {
+    if (
+      window.confirm('로그아웃 하시겠습니까?') &&
+      !this.logoutSubmitProcessing
+    ) {
       this.logoutSubmitProcessing = true;
       this.USER_LOGOUT.then(() => {
         this.$router.push('/');

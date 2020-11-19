@@ -47,6 +47,7 @@ View/Mypage.vue: `/mypage`
 
 ### | 비고
 
+- VSCode, prettier 사용
 - CSS Framework 미사용 / 모바일 해상도 지원
 - @vue/cli로 구성
 - typescript, vue-property-decorator 사용 지향
