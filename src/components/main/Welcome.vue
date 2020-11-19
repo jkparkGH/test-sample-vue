@@ -8,7 +8,7 @@
       Sample<br />
       Vue
       <img
-        style="width: 15px; height: 15px;"
+        class="logo-image"
         alt="Vue logo Image"
         src="~@/assets/images/logo.png"
       />
@@ -23,6 +23,10 @@ $modules: 'main-container';
 .main-container {
   h1 {
     padding-bottom: 16px;
+  }
+  .logo-image {
+    width: 15px;
+    height: 15px;
   }
 }
 </style>

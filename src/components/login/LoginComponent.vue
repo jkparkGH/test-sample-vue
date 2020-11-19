@@ -28,7 +28,7 @@
           }}
         </p>
       </div>
-      <button type="submit" class="btn-common">
+      <button type="submit" class="btn-common" :disabled="invalidLogin">
         로그인
       </button>
     </form>
@@ -41,7 +41,18 @@ import { EmailForm, PasswordForm } from '@/components/common/form/LoginForm';
 @Component({
   mixins: [EmailForm, PasswordForm]
 })
-export default class LoginComponent extends Vue {
+export default class LoginComponent extends Vue.extend({
+  computed: {
+    invalidLogin() {
+      return (
+        !this.$data.userEmail ||
+        this.$data.userEmailInvalid ||
+        !this.$data.userPassword ||
+        this.$data.userPasswordInvalid
+      );
+    }
+  }
+}) {
   loginSubmitProcessing: boolean = false;
 
   loginSubmit() {

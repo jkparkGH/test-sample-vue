@@ -2,13 +2,13 @@ import { Module } from 'vuex';
 import { RootState } from '@/store/root.interface';
 import {
   ChangePasswordState,
-  VerifyEmailAUth,
+  VerifyEmailAuthReqData,
   PatchNewPasswordReqData,
   PatchNewPasswordActionParams
 } from '@/store/modules/change-password/interface';
 import AxiosService from '@/service/axios';
 
-const staticState: ChangePasswordState = {
+const defaultState: ChangePasswordState = {
   stepNumber: 1,
   userEmail: '',
   issueToken: '',
@@ -18,7 +18,7 @@ const staticState: ChangePasswordState = {
 
 const ChangePassword: Module<ChangePasswordState, RootState> = {
   namespaced: true,
-  state: staticState,
+  state: defaultState,
   getters: {
     stepNumber: (state) => state.stepNumber,
     remainMillisecond: (state) => state.remainMillisecond
@@ -40,47 +40,51 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
       state.confirmToken = confirmToken;
     },
     resetState(state) {
-      state.stepNumber = staticState.stepNumber;
-      state.userEmail = staticState.userEmail;
-      state.issueToken = staticState.issueToken;
-      state.remainMillisecond = staticState.remainMillisecond;
-      state.confirmToken = staticState.confirmToken;
-      // for(let key: string in staticState) {
-      //   state[key] = staticState[key]
-      // }
+      state.stepNumber = defaultState.stepNumber;
+      state.userEmail = defaultState.userEmail;
+      state.issueToken = defaultState.issueToken;
+      state.remainMillisecond = defaultState.remainMillisecond;
+      state.confirmToken = defaultState.confirmToken;
     }
   },
   actions: {
     REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
       return new Promise((resolve, reject) => {
-        AxiosService.instance
-          .get(`/api/reset-password?email=${encodeURIComponent(userEmail)}`)
-          .then((response) => {
-            commit('setStepNumber', 2);
-            commit('setUserEmail', userEmail);
-            commit('setIssueToken', response.data.issueToken);
-            commit('initRemainTime', response.data.remainMillisecond);
-            resolve();
-          })
-          .catch((error) => reject(error));
+        if (userEmail) {
+          AxiosService.instance
+            .get(`/api/reset-password?email=${encodeURIComponent(userEmail)}`)
+            .then((response) => {
+              const resData: {
+                issueToken: string;
+                remainMillisecond: number;
+              } = response.data;
+              commit('setStepNumber', 2);
+              commit('setUserEmail', userEmail);
+              commit('setIssueToken', resData.issueToken);
+              commit('initRemainTime', resData.remainMillisecond);
+              resolve();
+            })
+            .catch((error) => reject(error));
+        }
       });
     },
     VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
-      const reqData: VerifyEmailAUth = {
+      const reqData: VerifyEmailAuthReqData = {
         email: state.userEmail,
         authCode: authCode,
         issueToken: state.issueToken
       };
 
-      if (!reqData.email || !reqData.authCode || !reqData.issueToken) {
-        return;
-      } else {
+      if (reqData.email && reqData.authCode && reqData.issueToken) {
         return new Promise((resolve, reject) => {
           AxiosService.instance
             .post(`/api/reset-password`, reqData)
             .then((response) => {
+              const resData: {
+                confirmToken: string;
+              } = response.data;
               commit('setStepNumber', 3);
-              commit('setConfirmToken', response.data.confirmToken);
+              commit('setConfirmToken', resData.confirmToken);
               resolve();
             })
             .catch((error) => reject(error));
@@ -99,13 +103,11 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
       };
 
       if (
-        !reqData.email ||
-        !reqData.confirmToken ||
-        !reqData.newPassword ||
-        !reqData.newPasswordConfirm
+        reqData.email &&
+        reqData.confirmToken &&
+        reqData.newPassword &&
+        reqData.newPasswordConfirm
       ) {
-        return;
-      } else {
         return new Promise((resolve, reject) => {
           AxiosService.instance
             .patch('/api/reset-password', reqData)

@@ -1,57 +1,58 @@
-# test-sample-vue
+# # test-sample-vue
 
-## Project setup
+---
 
-```
-yarn install || npm install
-```
+#### Project setup
 
-### Compiles and hot-reloads for development
+`yarn install` || `npm install`
 
-```
-yarn serve || npm run serve
-```
+#### Compiles and hot-reloads for development
 
-### Compiles and minifies for production
+`yarn serve` || `npm run serve`
 
-```
-yarn build || npm run build
-```
+#### Compiles and minifies for production
 
-### Lints and fixes files
+`yarn build` || `npm run build`
 
-```
-yarn lint || npm run lint
-```
+#### Lints and fixes files
 
-## Project Infomation
+`yarn lint` || `npm run lint`
 
-### 기능구현 (A + B + C)
+---
+
+## | Project Infomation
+
+### | 기능구현 (A + B + C)
 
 #### A. 비밀번호 변경
 
-ChangePassword.vue: `/change-password`
+View/ChangePassword.vue: `/change-password`
 
 > [ Router childrens ]  
-> path: `/change-password` : RequestEmailAuth.vue  
-> path: `/change-password/auth` : VerifyEmailAuth.vue  
-> path: `/change-password/patch` : PatchNewPassword.vue
+> path: `/change-password/request` : /components/change-password/RequestEmailAuth.vue  
+> path: `/change-password/auth` : /components/change-password/VerifyEmailAuth.vue  
+> path: `/change-password/patch` : /components/change-password/PatchNewPassword.vue
 
 #### B. 로그인
 
-Login.vue: `/login`
+View/Login.vue: `/login`
 
-> LoginComponent.vue
+> /components/login/LoginComponent.vue
 
 #### C. 회원 정보 조회 페이지
 
-Mypage.vue: `/mypage`
+View/Mypage.vue: `/mypage`
 
-> UserInfoList.vue
+> /components/mypage/UserInfoList.vue
 
-### 비고
+### | 비고
 
-- change-password > 개별 컴포넌트에 Mixin 컴포넌트(`/components/common/form/Loginform.ts`) 적용
-- API 요청 함수 개별 쓰로틀링 구현
-- accessToken 사용자 브라우저 임시저장 (cookie / 5분)
-- 로그인 상태에 따른 ui 변경 / 페이지 redirection
+- CSS Framework 미사용 / 모바일 해상도 지원
+- @vue/cli로 구성
+- typescript, vue-property-decorator 사용 지향
+- Mixin 컴포넌트(/components/common/form/Loginform.ts) 활용
+- API 요청 함수 개별 쓰로틀링 구현(delay: 500ms)
+- accessToken 사용자 브라우저 cookie에 임시저장 (timeout: 300sec)
+- 로그인 상태에 따른 ui 변경 및 페이지 redirection 구현
+
+---

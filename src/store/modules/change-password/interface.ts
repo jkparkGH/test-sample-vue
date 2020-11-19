@@ -6,7 +6,7 @@ export interface ChangePasswordState {
   remainMillisecond: number;
 }
 
-export interface VerifyEmailAUth {
+export interface VerifyEmailAuthReqData {
   email: string;
   authCode: string;
   issueToken: string;

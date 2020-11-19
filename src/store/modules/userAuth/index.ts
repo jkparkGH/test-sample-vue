@@ -32,10 +32,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
       state.accessToken = params;
     },
     setUserInfo(state, params: UserInfo) {
-      state.userInfo = {
-        ...state.userInfo,
-        ...params
-      };
+      state.userInfo = params;
     },
     setCookieAccessToken(state, seconds: number) {
       document.cookie = `${tokenStringName}=${state.accessToken};path=/;domain=${document.domain};max-age=${seconds};`;
@@ -57,7 +54,10 @@ const UserAuth: Module<UserAuthState, RootState> = {
         AxiosService.instance
           .post('/api/login', reqData)
           .then((response) => {
-            commit('setAccessToken', response.data.accessToken);
+            const resData: {
+              accessToken: string;
+            } = response.data;
+            commit('setAccessToken', resData.accessToken);
             commit('setIsLogin', true);
             commit('setCookieAccessToken', 300);
             resolve();
@@ -100,7 +100,8 @@ const UserAuth: Module<UserAuthState, RootState> = {
             headers: { Authorization: `Bearer ${state.accessToken}` }
           })
           .then((response) => {
-            commit('setUserInfo', response.data);
+            const resData: UserInfo = response.data;
+            commit('setUserInfo', resData);
           })
           .catch((error) => console.dir(error));
       }
