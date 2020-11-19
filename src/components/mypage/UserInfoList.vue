@@ -1,5 +1,10 @@
 <template>
-  <section>
+  <section class="user-info-container">
+    <div>
+      <button type="button" class="btn-common _logout" @click="logoutSubmit">
+        Logout
+      </button>
+    </div>
     <ul class="user-info-list">
       <li>
         <h4># 이름</h4>
@@ -27,7 +32,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 @Component
 export default class UserInfoList extends Vue.extend({
@@ -35,17 +40,37 @@ export default class UserInfoList extends Vue.extend({
     ...mapGetters({
       isLogin: 'UserAuth/isLogin',
       userInfo: 'UserAuth/userInfo'
+    }),
+    ...mapActions({
+      GET_USER_INFO: 'UserAuth/GET_USER_INFO',
+      USER_LOGOUT: 'UserAuth/USER_LOGOUT'
     })
   }
 }) {
+  logoutSubmitProcessing: boolean = false;
+
+  logoutSubmit() {
+    if (!this.logoutSubmitProcessing) {
+      this.logoutSubmitProcessing = true;
+      this.USER_LOGOUT.then(() => {
+        this.$router.push('/');
+      })
+        .catch((error) => console.dir(error))
+        .finally(() => {
+          this.logoutSubmitProcessing = false;
+        });
+    }
+  }
+
   isLoginValid() {
     if (!this.isLogin) {
       alert('Login이 필요합니다');
       this.$router.push('/login');
     } else {
-      this.$store.dispatch('UserAuth/GET_USER_INFO');
+      this.GET_USER_INFO;
     }
   }
+
   created() {
     this.isLoginValid();
   }
@@ -53,6 +78,15 @@ export default class UserInfoList extends Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.user-info-container {
+  position: relative;
+  button._logout {
+    position: absolute;
+    top: -136px;
+    right: 20px;
+  }
+}
+
 $modules: 'user-info-list';
 .#{$modules} {
   padding-top: 24px;

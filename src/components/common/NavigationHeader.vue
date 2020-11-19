@@ -8,12 +8,12 @@
         <li v-show="!isLogin">
           <router-link to="/login"><span>L</span>ogin</router-link>
         </li>
-        <li v-show="!isLogin">
+        <li>
           <router-link to="/change-password/request">
             <span>C</span>hange-password
           </router-link>
         </li>
-        <li v-show="!isLogin">
+        <li v-show="isLogin">
           <router-link to="/mypage"><span>M</span>ypage</router-link>
         </li>
       </ul>
@@ -23,10 +23,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-@Component
-export default class NavigationHeader extends Vue {
-  private isLogin: boolean = false;
-}
+@Component({
+  computed: {
+    isLogin() {
+      return this.$store.getters['UserAuth/isLogin'];
+    }
+  }
+})
+export default class NavigationHeader extends Vue {}
 </script>
 
 <style scoped lang="scss">

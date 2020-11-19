@@ -3,17 +3,19 @@ import { RootState } from '@/store/root.interface';
 import { UserAuthState, UserInfo, UserLoginActions } from './interface';
 import AxiosService from '@/service/axios';
 
+const staticUserInfo: UserInfo = {
+  name: '',
+  email: '',
+  profileImage: '',
+  lastConnectedAt: null
+};
+
 const UserAuth: Module<UserAuthState, RootState> = {
   namespaced: true,
   state: {
     isLogin: false,
     accessToken: '',
-    userInfo: {
-      name: '',
-      email: '',
-      profileImage: '',
-      lastConnectedAt: null
-    }
+    userInfo: staticUserInfo
   },
   getters: {
     isLogin: (state) => state.isLogin,
@@ -46,6 +48,27 @@ const UserAuth: Module<UserAuthState, RootState> = {
           })
           .catch((error) => reject(error));
       });
+    },
+    USER_LOGOUT: ({ commit, state }) => {
+      if (state.isLogin && state.accessToken) {
+        new Promise((resolve, reject) => {
+          AxiosService.instance
+            .post(
+              '/api/logout',
+              {},
+              {
+                headers: { Authorization: `Bearer ${state.accessToken}` }
+              }
+            )
+            .then(() => {
+              commit('setIsLogin', false);
+              commit('setAccessToken', '');
+              commit('setUserInfo', staticUserInfo);
+              resolve();
+            })
+            .catch((error) => reject(error));
+        });
+      }
     },
     GET_USER_INFO: ({ commit, state }) => {
       if (state.isLogin && state.accessToken) {
