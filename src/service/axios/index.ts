@@ -17,8 +17,10 @@ class AxiosService {
         return response;
       },
       (error) => {
-        if (error.response && error.response.data) {
+        try {
           alert(error.response.data.error.message);
+        } catch (error) {
+          throw console.dir(error);
         }
         return Promise.reject(error);
       }
