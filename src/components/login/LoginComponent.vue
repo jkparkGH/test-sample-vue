@@ -53,7 +53,19 @@ export default class LoginComponent extends Vue {
       userPassword &&
       !userPasswordInvalid
     ) {
-      console.log('login');
+      this.$store
+        .dispatch('UserAuth/USER_LOGIN', {
+          email: userEmail,
+          password: userPassword
+        })
+        .then(() => {
+          this.$router.push('/mypage');
+        })
+        .catch((error) => console.dir(error));
+      // .finally(() => {
+      //   // TEST
+      //   this.$router.push('/mypage');
+      // });
     }
   }
 }
