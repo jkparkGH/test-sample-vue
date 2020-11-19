@@ -47,8 +47,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { PasswordForm } from '@/components/common/form/LoginForm';
 
-@Component
+@Component({
+  mixins: [PasswordForm]
+})
 export default class PatchNewPassword extends Vue.extend({
   computed: {
     matchInvalid() {
@@ -76,59 +79,27 @@ export default class PatchNewPassword extends Vue.extend({
     }
   }
 }) {
-  userPassword: string | null = null;
-  userPasswordConfirm: string | null = null;
-  userPasswordInvalid: boolean = false;
-  userPasswordConfirmInvalid: boolean = false;
-  isMatchedPaswords: boolean = false;
-
-  checkValidPassword(password: string) {
-    const regExp = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
-    return regExp.test(password);
-  }
-
-  validMatchPassword() {
-    if (this.userPassword && this.userPasswordConfirm) {
-      this.isMatchedPaswords = this.userPassword === this.userPasswordConfirm;
-    }
-  }
-
-  validUserPasswordInput($event: Event) {
-    this.userPassword = ($event.target as HTMLInputElement).value;
-    if (this.userPassword === '') {
-      this.userPasswordInvalid = true;
-    } else if (!this.checkValidPassword(this.userPassword)) {
-      this.userPasswordInvalid = true;
-    } else {
-      this.userPasswordInvalid = false;
-    }
-    this.validMatchPassword();
-  }
-
-  validUserPasswordConfirmInput($event: Event) {
-    this.userPasswordConfirm = ($event.target as HTMLInputElement).value;
-    if (this.userPasswordConfirm === '') {
-      this.userPasswordConfirmInvalid = true;
-    } else if (!this.checkValidPassword(this.userPasswordConfirm)) {
-      this.userPasswordConfirmInvalid = true;
-    } else {
-      this.userPasswordConfirmInvalid = false;
-    }
-    this.validMatchPassword();
-  }
-
+  submitPatchNewPasswordProcessing: boolean = false;
   submitPatchNewPassword() {
-    if (this.passwordValid) {
+    const userPassword: string = this.$data.userPassword;
+    const userPasswordConfirm: string = this.$data.userPasswordConfirm;
+    if (!this.submitPatchNewPasswordProcessing && this.passwordValid) {
+      this.submitPatchNewPasswordProcessing = true;
       this.$store
         .dispatch('ChangePassword/PATCH_NEW_PASSWORD', {
-          userPassword: this.userPassword,
-          userPasswordComfirm: this.userPasswordConfirm
+          userPassword: userPassword,
+          userPasswordComfirm: userPasswordConfirm
         })
         .then(() => {
           alert('비밀번호 변경이 완료되었습니다.');
           this.$router.push('/');
         })
-        .catch((error) => console.dir(error));
+        .catch((error) => console.dir(error))
+        .finally(() => {
+          setTimeout(() => {
+            this.submitPatchNewPasswordProcessing = false;
+          }, 500);
+        });
     }
   }
 }

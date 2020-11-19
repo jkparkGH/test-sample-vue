@@ -53,7 +53,7 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
           })
           .catch((error) => reject(error));
         // .finally(() => {
-        //   // TODO: delete Block
+        //   // TEST
         //   console.log('## TEST REQUEST_EMAIL_AUTH ##');
         //   commit('setStepNumber', 2);
         //   commit('setUserEmail', userEmail);
@@ -82,7 +82,7 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
             })
             .catch((error) => reject(error));
           // .finally(() => {
-          //   // TODO: delete Block
+          //   // TEST
           //   console.log('## TEST VERIFY_EMAIL_AUTH ##');
           //   commit('setStepNumber', 3);
           //   commit('setConfirmToken', `DummyConfirmTokenKAJOSKJQWEMNF`);

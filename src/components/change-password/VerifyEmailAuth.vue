@@ -42,6 +42,7 @@ export default class VerifyEmailAuth extends Vue {
     this.$store.getters['ChangePassword/remainMiliseconds']
   );
   isTimeOut: boolean = false;
+  submitVerifyAuthProcessing: boolean = false;
 
   startCountTimer() {
     const countInterval = setInterval(() => {
@@ -73,12 +74,24 @@ export default class VerifyEmailAuth extends Vue {
   }
 
   submitVerifyAuth() {
-    if (this.authCode && !this.authCodeInvalid && !this.isTimeOut) {
+    if (
+      !this.submitVerifyAuthProcessing &&
+      this.authCode &&
+      !this.authCodeInvalid &&
+      !this.isTimeOut
+    ) {
+      this.submitVerifyAuthProcessing = true;
       this.$store
         .dispatch('ChangePassword/VERIFY_EMAIL_AUTH', this.authCode)
         .then(() => this.$router.push('/change-password/patch'))
-        .catch((error) => console.dir(error));
-      // .finally(() => this.$router.push('/change-password/patch'));
+        .catch((error) => console.dir(error))
+        .finally(() => {
+          setTimeout(() => {
+            this.submitVerifyAuthProcessing = false;
+          }, 500);
+          // TEST
+          // this.$router.push('/change-password/patch');
+        });
     }
   }
 

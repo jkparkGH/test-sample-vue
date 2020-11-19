@@ -41,6 +41,8 @@ import { EmailForm, PasswordForm } from '@/components/common/form/LoginForm';
   mixins: [EmailForm, PasswordForm]
 })
 export default class LoginComponent extends Vue {
+  loginSubmitProcessing: boolean = false;
+
   loginSubmit() {
     const userEmail = this.$data.userEmail;
     const userEmailInvalid = this.$data.userEmailInvalid;
@@ -48,11 +50,13 @@ export default class LoginComponent extends Vue {
     const userPasswordInvalid = this.$data.userPasswordInvalid;
 
     if (
+      !this.loginSubmitProcessing &&
       userEmail &&
       !userEmailInvalid &&
       userPassword &&
       !userPasswordInvalid
     ) {
+      this.loginSubmitProcessing = true;
       this.$store
         .dispatch('UserAuth/USER_LOGIN', {
           email: userEmail,
@@ -61,11 +65,14 @@ export default class LoginComponent extends Vue {
         .then(() => {
           this.$router.push('/mypage');
         })
-        .catch((error) => console.dir(error));
-      // .finally(() => {
-      //   // TEST
-      //   this.$router.push('/mypage');
-      // });
+        .catch((error) => console.dir(error))
+        .finally(() => {
+          setTimeout(() => {
+            this.loginSubmitProcessing = false;
+          }, 500);
+          // TEST
+          // this.$router.push('/mypage');
+        });
     }
   }
 }

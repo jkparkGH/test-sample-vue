@@ -30,37 +30,31 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { EmailForm } from '@/components/common/form/LoginForm';
 
-@Component
+@Component({ mixins: [EmailForm] })
 export default class RequestEmailAuth extends Vue {
-  userEmail: string | null = null;
-  userEmailInvalid: boolean = false;
-
-  checkValidEmail(email: string) {
-    const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z]).*.[a-zA-Z]{2,3}$/i;
-    return regExp.test(email);
-  }
-
-  validEmailForInput($event: Event) {
-    this.userEmail = ($event.target as HTMLInputElement).value;
-    if (this.userEmail === '') {
-      this.userEmailInvalid = true;
-    } else if (!this.checkValidEmail(this.userEmail)) {
-      this.userEmailInvalid = true;
-    } else {
-      this.userEmailInvalid = false;
-    }
-  }
+  submitEmailAuthProcessing: boolean = false;
 
   submitEmailAuth() {
-    if (this.userEmail && !this.userEmailInvalid) {
+    const userEmail = this.$data.userEmail;
+    const userEmailInvalid = this.$data.userEmailInvalid;
+
+    if (!this.submitEmailAuthProcessing && userEmail && !userEmailInvalid) {
+      this.submitEmailAuthProcessing = true;
       this.$store
-        .dispatch('ChangePassword/REQUEST_EMAIL_AUTH', this.userEmail)
+        .dispatch('ChangePassword/REQUEST_EMAIL_AUTH', userEmail)
         .then(() => {
           this.$router.push('/change-password/auth');
         })
-        .catch((error) => console.dir(error));
-      // .finally(() => this.$router.push('/change-password/auth'));
+        .catch((error) => console.dir(error))
+        .finally(() => {
+          setTimeout(() => {
+            this.submitEmailAuthProcessing = false;
+          }, 500);
+          // TEST
+          // this.$router.push('/change-password/auth');
+        });
     }
   }
 }

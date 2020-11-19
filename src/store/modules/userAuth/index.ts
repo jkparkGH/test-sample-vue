@@ -13,9 +13,6 @@ const UserAuth: Module<UserAuthState, RootState> = {
       email: '',
       profileImage: '',
       lastConnectedAt: null
-    },
-    processing: {
-      USER_LOGIN: false
     }
   },
   getters: {
@@ -35,32 +32,25 @@ const UserAuth: Module<UserAuthState, RootState> = {
         ...state.userInfo,
         ...params
       };
-    },
-    toggleProcessing(state, key: string) {
-      state.processing[key] = !state.processing[key];
     }
   },
   actions: {
     USER_LOGIN: ({ commit, state }, reqData: UserLoginActions) => {
-      if (!state.processing.USER_LOGIN) {
-        commit('toggleProcessing', 'USER_LOGIN');
-        return new Promise((resolve, reject) => {
-          AxiosService.instance
-            .post('/api/login', reqData)
-            .then((response) => {
-              commit('setAccessToken', response.data.accessToken);
-              commit('setIsLogin', true);
-              resolve();
-            })
-            .catch((error) => reject(error))
-            .finally(() => {
-              commit('toggleProcessing', 'USER_LOGIN');
-              // // TEST
-              // commit('setAccessToken', 'sldjfio14094==124klj1!kljasodjfoijj1');
-              // commit('setIsLogin', true);
-            });
-        });
-      }
+      return new Promise((resolve, reject) => {
+        AxiosService.instance
+          .post('/api/login', reqData)
+          .then((response) => {
+            commit('setAccessToken', response.data.accessToken);
+            commit('setIsLogin', true);
+            resolve();
+          })
+          .catch((error) => reject(error))
+          .finally(() => {
+            // // TEST
+            // commit('setAccessToken', 'sldjfio14094==124klj1!kljasodjfoijj1');
+            // commit('setIsLogin', true);
+          });
+      });
     }
   }
 };

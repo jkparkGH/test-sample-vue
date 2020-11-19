@@ -9,7 +9,6 @@ export interface UserAuthState {
   isLogin: boolean;
   accessToken: string;
   userInfo: UserInfo;
-  processing?: any;
 }
 
 export interface UserLoginActions {
