@@ -38,25 +38,25 @@ import { Component, Vue } from 'vue-property-decorator';
 export default class VerifyEmailAuth extends Vue {
   authCode: string | null = null;
   authCodeInvalid: boolean = false;
-  remainMiliseconds: number = Number(
-    this.$store.getters['ChangePassword/remainMiliseconds']
+  remainMillisecond: number = Number(
+    this.$store.getters['ChangePassword/remainMillisecond']
   );
   isTimeOut: boolean = false;
   submitVerifyAuthProcessing: boolean = false;
 
   startCountTimer() {
     const countInterval = setInterval(() => {
-      if (this.remainMiliseconds <= 0) {
+      if (this.remainMillisecond <= 0) {
         clearInterval(countInterval);
         this.isTimeOut = true;
       } else {
-        this.remainMiliseconds -= 1000;
+        this.remainMillisecond -= 1000;
       }
     }, 1000);
   }
 
   filterdTimeString() {
-    const crrRemainTime: number = this.remainMiliseconds / 1000;
+    const crrRemainTime: number = this.remainMillisecond / 1000;
     const min: number = Math.floor(crrRemainTime / 60);
     const sec: number = crrRemainTime % 60;
     return `${min.toString().length === 1 ? '0' + min : min}:${
@@ -89,8 +89,6 @@ export default class VerifyEmailAuth extends Vue {
           setTimeout(() => {
             this.submitVerifyAuthProcessing = false;
           }, 500);
-          // TEST
-          // this.$router.push('/change-password/patch');
         });
     }
   }

@@ -35,7 +35,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
     }
   },
   actions: {
-    USER_LOGIN: ({ commit, state }, reqData: UserLoginActions) => {
+    USER_LOGIN: ({ commit }, reqData: UserLoginActions) => {
       return new Promise((resolve, reject) => {
         AxiosService.instance
           .post('/api/login', reqData)
@@ -44,12 +44,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
             commit('setIsLogin', true);
             resolve();
           })
-          .catch((error) => reject(error))
-          .finally(() => {
-            // // TEST
-            // commit('setAccessToken', 'sldjfio14094==124klj1!kljasodjfoijj1');
-            // commit('setIsLogin', true);
-          });
+          .catch((error) => reject(error));
       });
     }
   }

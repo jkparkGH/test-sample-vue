@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { EmailForm, PasswordForm } from '@/components/common/form/LoginForm';
 @Component({
   mixins: [EmailForm, PasswordForm]
@@ -70,8 +70,6 @@ export default class LoginComponent extends Vue {
           setTimeout(() => {
             this.loginSubmitProcessing = false;
           }, 500);
-          // TEST
-          // this.$router.push('/mypage');
         });
     }
   }

@@ -52,8 +52,6 @@ export default class RequestEmailAuth extends Vue {
           setTimeout(() => {
             this.submitEmailAuthProcessing = false;
           }, 500);
-          // TEST
-          // this.$router.push('/change-password/auth');
         });
     }
   }

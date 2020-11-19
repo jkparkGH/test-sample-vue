@@ -3,7 +3,7 @@ export interface ChangePasswordState {
   userEmail: string;
   issueToken: string;
   confirmToken: string;
-  remainMiliseconds: number;
+  remainMillisecond: number;
 }
 
 export interface VerifyEmailAUth {

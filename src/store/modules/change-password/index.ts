@@ -7,7 +7,6 @@ import {
   PatchNewPasswordActionParams
 } from '@/store/modules/change-password/interface';
 import AxiosService from '@/service/axios';
-// import { AxiosResponse } from 'axios';
 
 const ChangePassword: Module<ChangePasswordState, RootState> = {
   namespaced: true,
@@ -15,12 +14,12 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
     stepNumber: 1,
     userEmail: '',
     issueToken: '',
-    remainMiliseconds: 0, // MEMO: notion 페이지에 `remainMiliseconds`로 표기되어있는 상태, state명칭도 동일하게 따라감
+    remainMillisecond: 0,
     confirmToken: ''
   },
   getters: {
     stepNumber: (state) => state.stepNumber,
-    remainMiliseconds: (state) => state.remainMiliseconds
+    remainMillisecond: (state) => state.remainMillisecond
   },
   mutations: {
     setStepNumber(state, num: number) {
@@ -32,8 +31,8 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
     setIssueToken(state, issueToken: string) {
       state.issueToken = issueToken;
     },
-    initRemainTime(state, remainMiliseconds: number) {
-      state.remainMiliseconds = remainMiliseconds;
+    initRemainTime(state, remainMillisecond: number) {
+      state.remainMillisecond = remainMillisecond;
     },
     setConfirmToken(state, confirmToken: string) {
       state.confirmToken = confirmToken;
@@ -48,18 +47,10 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
             commit('setStepNumber', 2);
             commit('setUserEmail', userEmail);
             commit('setIssueToken', response.data.issueToken);
-            commit('initRemainTime', response.data.remainMiliseconds);
+            commit('initRemainTime', response.data.remainMillisecond);
             resolve();
           })
           .catch((error) => reject(error));
-        // .finally(() => {
-        //   // TEST
-        //   console.log('## TEST REQUEST_EMAIL_AUTH ##');
-        //   commit('setStepNumber', 2);
-        //   commit('setUserEmail', userEmail);
-        //   commit('setIssueToken', 'DummyissueTokenAKDJFOVVZ');
-        //   commit('initRemainTime', 1000 * 60 * 3);
-        // });
       });
     },
     VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
@@ -81,12 +72,6 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
               resolve();
             })
             .catch((error) => reject(error));
-          // .finally(() => {
-          //   // TEST
-          //   console.log('## TEST VERIFY_EMAIL_AUTH ##');
-          //   commit('setStepNumber', 3);
-          //   commit('setConfirmToken', `DummyConfirmTokenKAJOSKJQWEMNF`);
-          // });
         });
       }
     },
