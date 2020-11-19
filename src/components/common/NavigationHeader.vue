@@ -34,13 +34,14 @@ $modules: 'navigation-header';
 .#{$modules} {
   height: 50px;
   overflow: hidden;
-  border-bottom: 1px solid #e1e1e1;
   &__container {
     position: fixed;
     width: 100%;
     height: 50px;
     top: 0;
     left: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #e1e1e1;
     z-index: 3;
     &:after {
       content: '';

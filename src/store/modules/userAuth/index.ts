@@ -46,6 +46,18 @@ const UserAuth: Module<UserAuthState, RootState> = {
           })
           .catch((error) => reject(error));
       });
+    },
+    GET_USER_INFO: ({ commit, state }) => {
+      if (state.isLogin && state.accessToken) {
+        AxiosService.instance
+          .get('/api/user', {
+            headers: { Authorization: `Bearer ${state.accessToken}` }
+          })
+          .then((response) => {
+            commit('setUserInfo', response.data);
+          })
+          .catch((error) => console.dir(error));
+      }
     }
   }
 };
