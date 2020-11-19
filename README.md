@@ -43,5 +43,15 @@ Login.vue: `/login`
 
 > LoginComponent.vue
 
-- change-password > 개별 컴포넌트에 Mixin 컴포넌트(EmailForm, PasswordForm) 적용
+#### C. 회원 정보 조회 페이지
+
+Mypage.vue: `/mypage`
+
+> UserInfoList.vue
+
+### 비고
+
+- change-password > 개별 컴포넌트에 Mixin 컴포넌트(`/components/common/form/Loginform.ts`) 적용
 - API 요청 함수 개별 쓰로틀링 구현
+- accessToken 사용자 브라우저 임시저장 (cookie / 5분)
+- 로그인 상태에 따른 ui 변경 / 페이지 redirection
