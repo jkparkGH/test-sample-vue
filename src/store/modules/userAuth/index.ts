@@ -2,8 +2,9 @@ import { Module } from 'vuex';
 import { RootState } from '@/store/root.interface';
 import { UserAuthState, UserInfo, UserLoginActions } from './interface';
 import AxiosService from '@/service/axios';
+import { AxiosResponse } from 'axios';
 
-const staticUserInfo: UserInfo = {
+const defaultUserInfo: UserInfo = {
   name: '',
   email: '',
   profileImage: '',
@@ -11,13 +12,14 @@ const staticUserInfo: UserInfo = {
 };
 
 const tokenStringName = '__testVueAccessToken';
+const localDummyString = '=eyxz';
 
 const UserAuth: Module<UserAuthState, RootState> = {
   namespaced: true,
   state: {
     isLogin: false,
     accessToken: '',
-    userInfo: staticUserInfo
+    userInfo: defaultUserInfo
   },
   getters: {
     isLogin: (state) => state.isLogin,
@@ -35,7 +37,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
       state.userInfo = params;
     },
     setCookieAccessToken(state, seconds: number) {
-      document.cookie = `${tokenStringName}=${state.accessToken};path=/;domain=${document.domain};max-age=${seconds};`;
+      document.cookie = `${tokenStringName}=${localDummyString}${state.accessToken};path=/;domain=${document.domain};max-age=${seconds};`;
     },
     getCookieAccessToken(state) {
       const value: Array<string> | null = document.cookie.match(
@@ -43,51 +45,40 @@ const UserAuth: Module<UserAuthState, RootState> = {
       );
       const result = value ? unescape(value[2]) : null;
       if (result) {
-        state.accessToken = result;
+        state.accessToken = result.replace(localDummyString, '');
         state.isLogin = true;
       }
     }
   },
   actions: {
-    USER_LOGIN: ({ commit }, reqData: UserLoginActions) => {
-      return new Promise((resolve, reject) => {
-        AxiosService.instance
-          .post('/api/login', reqData)
-          .then((response) => {
-            const resData: {
-              accessToken: string;
-            } = response.data;
-            commit('setAccessToken', resData.accessToken);
-            commit('setIsLogin', true);
-            commit('setCookieAccessToken', 300);
-            resolve();
-          })
-          .catch((error) => reject(error));
-      });
-    },
-    USER_LOGOUT: ({ commit, state }) => {
-      if (state.isLogin && state.accessToken) {
-        new Promise((resolve, reject) => {
-          AxiosService.instance
-            .post(
-              '/api/logout',
-              {},
-              {
-                headers: { Authorization: `Bearer ${state.accessToken}` }
-              }
-            )
-            .then(() => {
-              commit('setIsLogin', false);
-              commit('setAccessToken', '');
-              commit('setUserInfo', staticUserInfo);
-              commit('setCookieAccessToken', 1);
-              resolve();
-            })
-            .catch((error) => reject(error));
-        });
+    async USER_LOGIN({ commit }, reqData: UserLoginActions) {
+      if (reqData.email && reqData.password) {
+        const response: AxiosResponse<{
+          accessToken: string;
+        }> = await AxiosService.instance.post('/api/login', reqData);
+
+        commit('setAccessToken', response.data.accessToken);
+        commit('setIsLogin', true);
+        commit('setCookieAccessToken', 300);
       }
     },
-    GET_USER_INFO: ({ commit, state }) => {
+    async USER_LOGOUT({ commit, state }) {
+      if (state.isLogin && state.accessToken) {
+        await AxiosService.instance.post(
+          '/api/logout',
+          {},
+          {
+            headers: { Authorization: `Bearer ${state.accessToken}` }
+          }
+        );
+
+        commit('setIsLogin', false);
+        commit('setAccessToken', '');
+        commit('setUserInfo', defaultUserInfo);
+        commit('setCookieAccessToken', 1);
+      }
+    },
+    async GET_USER_INFO({ commit, state }) {
       if (
         state.isLogin &&
         state.accessToken &&
@@ -95,18 +86,17 @@ const UserAuth: Module<UserAuthState, RootState> = {
         !state.userInfo.email &&
         !state.userInfo.profileImage
       ) {
-        AxiosService.instance
-          .get('/api/user', {
+        const response: AxiosResponse<UserInfo> = await AxiosService.instance.get(
+          '/api/user',
+          {
             headers: { Authorization: `Bearer ${state.accessToken}` }
-          })
-          .then((response) => {
-            const resData: UserInfo = response.data;
-            commit('setUserInfo', resData);
-          })
-          .catch((error) => console.dir(error));
+          }
+        );
+
+        commit('setUserInfo', response.data);
       }
     },
-    CHECK_USER_COOKIE: ({ commit }) => {
+    CHECK_USER_COOKIE({ commit }) {
       commit('getCookieAccessToken');
     }
   }

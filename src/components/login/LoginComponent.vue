@@ -7,6 +7,7 @@
           placeholder="Email 주소를 입력해 주세요"
           v-model="userEmail"
           @keyup="validEmailForInput"
+          title="ably452@dummy.com"
         />
         <p class="error-msg" v-show="userEmailInvalid">
           {{
@@ -21,6 +22,7 @@
           autocomplete="off"
           v-model="userPassword"
           @keyup.prevent="validUserPasswordInput"
+          title="!abc32***"
         />
         <p class="error-msg" v-show="userPasswordInvalid">
           {{
@@ -55,7 +57,7 @@ export default class LoginComponent extends Vue.extend({
 }) {
   loginSubmitProcessing: boolean = false;
 
-  loginSubmit() {
+  async loginSubmit() {
     const userEmail = this.$data.userEmail;
     const userEmailInvalid = this.$data.userEmailInvalid;
     const userPassword = this.$data.userPassword;
@@ -69,20 +71,20 @@ export default class LoginComponent extends Vue.extend({
       !userPasswordInvalid
     ) {
       this.loginSubmitProcessing = true;
-      this.$store
-        .dispatch('UserAuth/USER_LOGIN', {
+
+      try {
+        await this.$store.dispatch('UserAuth/USER_LOGIN', {
           email: userEmail,
           password: userPassword
-        })
-        .then(() => {
-          this.$router.push('/mypage');
-        })
-        .catch((error) => console.dir(error))
-        .finally(() => {
-          setTimeout(() => {
-            this.loginSubmitProcessing = false;
-          }, 500);
         });
+        this.$router.push('/mypage');
+      } catch (error) {
+        console.dir(error);
+      } finally {
+        setTimeout(() => {
+          this.loginSubmitProcessing = false;
+        }, 500);
+      }
     }
   }
 }

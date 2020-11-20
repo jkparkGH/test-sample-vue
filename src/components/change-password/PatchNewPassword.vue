@@ -82,26 +82,26 @@ export default class PatchNewPassword extends Vue.extend({
   }
 }) {
   submitPatchNewPasswordProcessing: boolean = false;
-  submitPatchNewPassword() {
+  async submitPatchNewPassword() {
     const userPassword: string = this.$data.userPassword;
     const userPasswordConfirm: string = this.$data.userPasswordConfirm;
     if (!this.submitPatchNewPasswordProcessing && this.passwordValid) {
       this.submitPatchNewPasswordProcessing = true;
-      this.$store
-        .dispatch('ChangePassword/PATCH_NEW_PASSWORD', {
+
+      try {
+        await this.$store.dispatch('ChangePassword/PATCH_NEW_PASSWORD', {
           userPassword: userPassword,
           userPasswordComfirm: userPasswordConfirm
-        })
-        .then(() => {
-          alert('비밀번호 변경이 완료되었습니다.');
-          this.$router.push('/');
-        })
-        .catch((error) => console.dir(error))
-        .finally(() => {
-          setTimeout(() => {
-            this.submitPatchNewPasswordProcessing = false;
-          }, 500);
         });
+        alert('비밀번호 변경이 완료되었습니다.');
+        this.$router.push('/');
+      } catch (error) {
+        console.dir(error);
+      } finally {
+        setTimeout(() => {
+          this.submitPatchNewPasswordProcessing = false;
+        }, 500);
+      }
     }
   }
 }

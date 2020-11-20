@@ -5,6 +5,18 @@
         Logout
       </button>
     </div>
+    <div class="profile-container">
+      <h4 class="_blind"># 프로필 사진</h4>
+      <div class="profile-image">
+        <img
+          v-if="userInfo.profileImage"
+          :src="userInfo.profileImage"
+          alt="Mypage user profile image."
+          loading="lazy"
+        />
+      </div>
+      <span class="profile-url">url: {{ userInfo.profileImage || '-' }}</span>
+    </div>
     <ul class="user-info-list">
       <li>
         <h4># 이름</h4>
@@ -13,18 +25,6 @@
       <li>
         <h4># 이메일</h4>
         <span>{{ userInfo.email || '-' }}</span>
-      </li>
-      <li>
-        <h4># 프로필 사진</h4>
-        <div class="profile-container">
-          <img
-            v-if="userInfo.profileImage"
-            :src="userInfo.profileImage"
-            alt="Mypage user profile image."
-            loading="lazy"
-          />
-        </div>
-        <span class="profile-url">url: {{ userInfo.profileImage || '-' }}</span>
       </li>
     </ul>
   </section>
@@ -49,19 +49,23 @@ export default class UserInfoList extends Vue.extend({
 }) {
   logoutSubmitProcessing: boolean = false;
 
-  logoutSubmit() {
+  async logoutSubmit() {
     if (
       window.confirm('로그아웃 하시겠습니까?') &&
       !this.logoutSubmitProcessing
     ) {
       this.logoutSubmitProcessing = true;
-      this.USER_LOGOUT.then(() => {
+
+      try {
+        await this.USER_LOGOUT;
         this.$router.push('/');
-      })
-        .catch((error) => console.dir(error))
-        .finally(() => {
+      } catch (error) {
+        console.dir(error);
+      } finally {
+        setTimeout(() => {
           this.logoutSubmitProcessing = false;
-        });
+        }, 500);
+      }
     }
   }
 
@@ -81,51 +85,66 @@ export default class UserInfoList extends Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.user-info-container {
+$modules: 'user-info-container';
+.#{$modules} {
   position: relative;
+  ._blind {
+    display: none;
+  }
   button._logout {
     position: fixed;
     top: 70px;
     right: 20px;
   }
-}
-
-$modules: 'user-info-list';
-.#{$modules} {
-  padding-top: 24px;
-  li {
-    h4 {
-      font-size: 16px;
-      padding-bottom: 8px;
-    }
-    span {
-      font-size: 14px;
-      padding-left: 12px;
-    }
-    & + li {
-      margin-top: 32px;
-    }
-    .profile-container {
+  .profile-container {
+    overflow: hidden;
+    position: relative;
+    padding-right: 24px;
+    padding-bottom: 24px;
+    display: inline-block;
+    vertical-align: top;
+    .profile-image {
       min-width: 100px;
       min-height: 100px;
-      max-width: 240px;
-      margin-left: 12px;
+      max-width: 180px;
       background-color: #efefef;
+      border-radius: 6px;
       overflow: hidden;
       img {
         display: block;
         width: 100%;
       }
     }
-    .profile-url {
-      font-size: 10px;
-      color: #efefef;
-      width: 100%;
-      display: block;
-      word-break: break-all;
-      padding-right: 10px;
-      padding-top: 5px;
-      box-sizing: border-box;
+  }
+  .profile-url {
+    font-size: 10px;
+    color: #efefef;
+    opacity: 0;
+    width: 100%;
+    display: block;
+    word-break: break-all;
+    padding-right: 10px;
+    padding-top: 5px;
+    box-sizing: border-box;
+    position: absolute;
+  }
+  .user-info-list {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 12px;
+    padding-right: 20px;
+    li {
+      h4 {
+        font-size: 16px;
+        padding-bottom: 8px;
+      }
+      span {
+        font-size: 14px;
+        padding-left: 12px;
+      }
+      & + li {
+        margin-top: 32px;
+      }
     }
   }
 }

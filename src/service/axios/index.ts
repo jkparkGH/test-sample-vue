@@ -20,7 +20,7 @@ class AxiosService {
         try {
           alert(error.response.data.error.message);
         } catch (error) {
-          throw console.dir(error);
+          alert(error);
         }
         return Promise.reject(error);
       }

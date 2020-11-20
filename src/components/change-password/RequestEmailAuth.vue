@@ -36,23 +36,27 @@ import { EmailForm } from '@/components/common/form/LoginForm';
 export default class RequestEmailAuth extends Vue {
   submitEmailAuthProcessing: boolean = false;
 
-  submitEmailAuth() {
+  async submitEmailAuth() {
     const userEmail = this.$data.userEmail;
     const userEmailInvalid = this.$data.userEmailInvalid;
 
     if (!this.submitEmailAuthProcessing && userEmail && !userEmailInvalid) {
       this.submitEmailAuthProcessing = true;
-      this.$store
-        .dispatch('ChangePassword/REQUEST_EMAIL_AUTH', userEmail)
-        .then(() => {
-          this.$router.push('/change-password/auth');
-        })
-        .catch((error) => console.dir(error))
-        .finally(() => {
-          setTimeout(() => {
-            this.submitEmailAuthProcessing = false;
-          }, 500);
-        });
+
+      try {
+        await this.$store.dispatch(
+          'ChangePassword/REQUEST_EMAIL_AUTH',
+          userEmail
+        );
+
+        this.$router.push('/change-password/auth');
+      } catch (error) {
+        console.dir(error);
+      } finally {
+        setTimeout(() => {
+          this.submitEmailAuthProcessing = false;
+        }, 500);
+      }
     }
   }
 }

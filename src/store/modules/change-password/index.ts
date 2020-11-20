@@ -7,6 +7,7 @@ import {
   PatchNewPasswordActionParams
 } from '@/store/modules/change-password/interface';
 import AxiosService from '@/service/axios';
+import { AxiosResponse } from 'axios';
 
 const defaultState: ChangePasswordState = {
   stepNumber: 1,
@@ -48,27 +49,22 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
     }
   },
   actions: {
-    REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
-      return new Promise((resolve, reject) => {
-        if (userEmail) {
-          AxiosService.instance
-            .get(`/api/reset-password?email=${encodeURIComponent(userEmail)}`)
-            .then((response) => {
-              const resData: {
-                issueToken: string;
-                remainMillisecond: number;
-              } = response.data;
-              commit('setStepNumber', 2);
-              commit('setUserEmail', userEmail);
-              commit('setIssueToken', resData.issueToken);
-              commit('initRemainTime', resData.remainMillisecond);
-              resolve();
-            })
-            .catch((error) => reject(error));
-        }
-      });
+    async REQUEST_EMAIL_AUTH({ commit }, userEmail: string) {
+      if (userEmail) {
+        const response: AxiosResponse<{
+          issueToken: string;
+          remainMillisecond: number;
+        }> = await AxiosService.instance.get(
+          `/api/reset-password?email=${encodeURIComponent(userEmail)}`
+        );
+
+        commit('setStepNumber', 2);
+        commit('setUserEmail', userEmail);
+        commit('setIssueToken', response.data.issueToken);
+        commit('initRemainTime', response.data.remainMillisecond);
+      }
     },
-    VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
+    async VERIFY_EMAIL_AUTH({ commit, state }, authCode: string) {
       const reqData: VerifyEmailAuthReqData = {
         email: state.userEmail,
         authCode: authCode,
@@ -76,22 +72,14 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
       };
 
       if (reqData.email && reqData.authCode && reqData.issueToken) {
-        return new Promise((resolve, reject) => {
-          AxiosService.instance
-            .post(`/api/reset-password`, reqData)
-            .then((response) => {
-              const resData: {
-                confirmToken: string;
-              } = response.data;
-              commit('setStepNumber', 3);
-              commit('setConfirmToken', resData.confirmToken);
-              resolve();
-            })
-            .catch((error) => reject(error));
-        });
+        const response: AxiosResponse<{
+          confirmToken: string;
+        }> = await AxiosService.instance.post(`/api/reset-password`, reqData);
+        commit('setStepNumber', 3);
+        commit('setConfirmToken', response.data.confirmToken);
       }
     },
-    PATCH_NEW_PASSWORD(
+    async PATCH_NEW_PASSWORD(
       { commit, state },
       params: PatchNewPasswordActionParams
     ) {
@@ -108,15 +96,8 @@ const ChangePassword: Module<ChangePasswordState, RootState> = {
         reqData.newPassword &&
         reqData.newPasswordConfirm
       ) {
-        return new Promise((resolve, reject) => {
-          AxiosService.instance
-            .patch('/api/reset-password', reqData)
-            .then(() => {
-              commit('setStepNumber', 1);
-              resolve();
-            })
-            .catch((error) => reject(error));
-        });
+        await AxiosService.instance.patch('/api/reset-password', reqData);
+        commit('setStepNumber', 1);
       }
     },
     RESET_STATE({ commit }) {

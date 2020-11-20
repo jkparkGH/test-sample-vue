@@ -45,14 +45,19 @@ export default class VerifyEmailAuth extends Vue {
   submitVerifyAuthProcessing: boolean = false;
 
   startCountTimer() {
-    const countInterval = setInterval(() => {
-      if (this.remainMillisecond <= 0) {
-        clearInterval(countInterval);
-        this.isTimeOut = true;
-      } else {
-        this.remainMillisecond -= 1000;
-      }
-    }, 1000);
+    if (isNaN(this.remainMillisecond)) {
+      alert('유효시간 초기화에 실패하였습니다. 다음에 다시 시도해 주세요');
+      return this.$router.push('/');
+    } else {
+      const countInterval = setInterval(() => {
+        if (this.remainMillisecond <= 0) {
+          clearInterval(countInterval);
+          this.isTimeOut = true;
+        } else {
+          this.remainMillisecond -= 1000;
+        }
+      }, 1000);
+    }
   }
 
   filterdTimeString() {
@@ -73,7 +78,7 @@ export default class VerifyEmailAuth extends Vue {
     }
   }
 
-  submitVerifyAuth() {
+  async submitVerifyAuth() {
     if (
       !this.submitVerifyAuthProcessing &&
       this.authCode &&
@@ -81,15 +86,21 @@ export default class VerifyEmailAuth extends Vue {
       !this.isTimeOut
     ) {
       this.submitVerifyAuthProcessing = true;
-      this.$store
-        .dispatch('ChangePassword/VERIFY_EMAIL_AUTH', this.authCode)
-        .then(() => this.$router.push('/change-password/patch'))
-        .catch((error) => console.dir(error))
-        .finally(() => {
-          setTimeout(() => {
-            this.submitVerifyAuthProcessing = false;
-          }, 500);
-        });
+
+      try {
+        await this.$store.dispatch(
+          'ChangePassword/VERIFY_EMAIL_AUTH',
+          this.authCode
+        );
+
+        this.$router.push('/change-password/patch');
+      } catch (error) {
+        console.dir(error);
+      } finally {
+        setTimeout(() => {
+          this.submitVerifyAuthProcessing = false;
+        }, 500);
+      }
     }
   }
 
