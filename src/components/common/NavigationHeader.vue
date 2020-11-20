@@ -4,6 +4,7 @@
       <h1 class="navigation-header__home">
         <router-link to="/">M<span>ain</span></router-link>
       </h1>
+      <LoadingIndicator />
       <ul class="navigation-header__route-list">
         <li v-show="!isLogin">
           <router-link to="/login"><span>L</span>ogin</router-link>
@@ -23,7 +24,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import LoadingIndicator from './LoadingIndicator.vue';
 @Component({
+  components: { LoadingIndicator },
   computed: {
     isLogin() {
       return this.$store.getters['UserAuth/isLogin'];
