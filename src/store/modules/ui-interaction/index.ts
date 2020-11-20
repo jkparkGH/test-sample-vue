@@ -21,7 +21,6 @@ const UiInteraction: Module<
   },
   actions: {
     SET_IS_LOADING({ commit }, value: boolean) {
-      console.log('SET_IS_LOADING', value);
       commit('setIsLoading', value);
     }
   }

@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 import { SetLoadingIndicator } from '@/service/loading';
-import Store from '@/store';
 
 const baseURL = 'https://ably-frontend-interview-server.vercel.app';
 
@@ -13,17 +12,29 @@ class AxiosService {
     timeout: 100000
   });
 
-  constructor() {
-    console.log('constructor ON', Store);
+  setIsLoading(type: 'on' | 'off') {
+    SetLoadingIndicator(type);
+  }
 
-    // SetLoadingIndicator('on');
+  constructor() {
+    this.instance.interceptors.request.use(
+      (config) => {
+        this.setIsLoading('on');
+        return config;
+      },
+      (error) => {
+        this.setIsLoading('off');
+        return Promise.reject(error);
+      }
+    );
+
     this.instance.interceptors.response.use(
       (response) => {
-        // SetLoadingIndicator('off');
+        this.setIsLoading('off');
         return response;
       },
       (error) => {
-        // SetLoadingIndicator('off');
+        this.setIsLoading('off');
         try {
           alert(error.response.data.error.message);
         } catch (error) {

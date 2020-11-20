@@ -18,12 +18,7 @@ export default class LoadingIndicator extends Vue.extend({
       return this.$store.getters['isLoading'];
     }
   }
-}) {
-  mounted() {
-    SetLoadingIndicator('on');
-    SetLoadingIndicator('off');
-  }
-}
+}) {}
 </script>
 
 <style lang="scss" scoped>
