@@ -19,7 +19,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
   state: {
     isLogin: false,
     accessToken: '',
-    userInfo: defaultUserInfo
+    userInfo: Object.assign({}, defaultUserInfo)
   },
   getters: {
     isLogin: (state) => state.isLogin,
@@ -74,7 +74,7 @@ const UserAuth: Module<UserAuthState, RootState> = {
 
         commit('setIsLogin', false);
         commit('setAccessToken', '');
-        commit('setUserInfo', defaultUserInfo);
+        commit('setUserInfo', Object.assign({}, defaultUserInfo));
         commit('setCookieAccessToken', 1);
       }
     },

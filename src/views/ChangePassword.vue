@@ -1,7 +1,9 @@
 <template>
   <div>
     <h1>비밀번호 변경</h1>
-    <router-view />
+    <transition name="slide-fade">
+      <router-view />
+    </transition>
   </div>
 </template>
 

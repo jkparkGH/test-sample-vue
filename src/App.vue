@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <NavigationHeader />
-    <router-view class="router-view-container" />
+    <transition name="slide-fade">
+      <router-view class="router-view-container" />
+    </transition>
   </div>
 </template>
 

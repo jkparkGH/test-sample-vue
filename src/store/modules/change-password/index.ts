@@ -19,7 +19,7 @@ const defaultState: ChangePasswordState = {
 
 const ChangePassword: Module<ChangePasswordState, RootState> = {
   namespaced: true,
-  state: defaultState,
+  state: Object.assign({}, defaultState),
   getters: {
     stepNumber: (state) => state.stepNumber,
     remainMillisecond: (state) => state.remainMillisecond
