@@ -5,5 +5,5 @@ export function SetLoadingIndicator(type: 'on' | 'off') {
   type === 'off' &&
     setTimeout(() => {
       Store.dispatch('SET_IS_LOADING', false);
-    }, 300);
+    }, 200);
 }

@@ -9,7 +9,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { SetLoadingIndicator } from '@/service/loading';
 
 @Component
 export default class LoadingIndicator extends Vue.extend({
