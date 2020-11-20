@@ -49,7 +49,7 @@ View/Mypage.vue: `/mypage`
 
 - VSCode, prettier 사용
 - CSS Framework 미사용 / 모바일 해상도 지원
-- @vue/cli로 구성
+- @vue/cli 사용
 - typescript, vue-property-decorator 사용 지향
 - Mixin 컴포넌트(/components/common/form/Loginform.ts) 활용
 - API 요청 함수 개별 쓰로틀링 구현(delay: 500ms)
