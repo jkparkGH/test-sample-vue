@@ -31,6 +31,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { EmailForm } from '@/components/common/form/LoginForm';
+import commonAsync from '@/assets/js/commonAsync';
 
 @Component({ mixins: [EmailForm] })
 export default class RequestEmailAuth extends Vue {
@@ -41,22 +42,18 @@ export default class RequestEmailAuth extends Vue {
     const userEmailInvalid = this.$data.userEmailInvalid;
 
     if (!this.submitEmailAuthProcessing && userEmail && !userEmailInvalid) {
-      this.submitEmailAuthProcessing = true;
-
-      try {
-        await this.$store.dispatch(
-          'ChangePassword/REQUEST_EMAIL_AUTH',
-          userEmail
-        );
-
-        this.$router.push('/change-password/auth');
-      } catch (error) {
-        console.dir(error);
-      } finally {
-        setTimeout(() => {
-          this.submitEmailAuthProcessing = false;
-        }, 500);
-      }
+      commonAsync(
+        () => {
+          return this.$store.dispatch(
+            'ChangePassword/REQUEST_EMAIL_AUTH',
+            userEmail
+          );
+        },
+        () => {
+          this.$router.push('/change-password/auth');
+        },
+        this.submitEmailAuthProcessing
+      );
     }
   }
 }

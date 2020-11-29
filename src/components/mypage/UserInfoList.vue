@@ -33,6 +33,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { mapActions, mapGetters } from 'vuex';
+import commonAsync from '@/assets/js/commonAsync';
 
 @Component
 export default class UserInfoList extends Vue.extend({
@@ -54,18 +55,15 @@ export default class UserInfoList extends Vue.extend({
       window.confirm('로그아웃 하시겠습니까?') &&
       !this.logoutSubmitProcessing
     ) {
-      this.logoutSubmitProcessing = true;
-
-      try {
-        await this.USER_LOGOUT;
-        this.$router.push('/');
-      } catch (error) {
-        console.dir(error);
-      } finally {
-        setTimeout(() => {
-          this.logoutSubmitProcessing = false;
-        }, 500);
-      }
+      commonAsync(
+        () => {
+          return this.USER_LOGOUT;
+        },
+        () => {
+          this.$router.push('/');
+        },
+        this.logoutSubmitProcessing
+      );
     }
   }
 

@@ -40,6 +40,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { EmailForm, PasswordForm } from '@/components/common/form/LoginForm';
+import commonAsync from '@/assets/js/commonAsync';
+
 @Component({
   mixins: [EmailForm, PasswordForm]
 })
@@ -70,21 +72,18 @@ export default class LoginComponent extends Vue.extend({
       userPassword &&
       !userPasswordInvalid
     ) {
-      this.loginSubmitProcessing = true;
-
-      try {
-        await this.$store.dispatch('UserAuth/USER_LOGIN', {
-          email: userEmail,
-          password: userPassword
-        });
-        this.$router.push('/mypage');
-      } catch (error) {
-        console.dir(error);
-      } finally {
-        setTimeout(() => {
-          this.loginSubmitProcessing = false;
-        }, 500);
-      }
+      commonAsync(
+        () => {
+          return this.$store.dispatch('UserAuth/USER_LOGIN', {
+            email: userEmail,
+            password: userPassword
+          });
+        },
+        () => {
+          this.$router.push('/mypage');
+        },
+        this.loginSubmitProcessing
+      );
     }
   }
 }

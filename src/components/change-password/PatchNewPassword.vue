@@ -50,6 +50,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { PasswordForm } from '@/components/common/form/LoginForm';
+import commonAsync from '@/assets/js/commonAsync';
 
 @Component({
   mixins: [PasswordForm]
@@ -82,31 +83,24 @@ export default class PatchNewPassword extends Vue.extend({
   }
 }) {
   submitPatchNewPasswordProcessing: boolean = false;
+
   async submitPatchNewPassword() {
     const userPassword: string = this.$data.userPassword;
     const userPasswordConfirm: string = this.$data.userPasswordConfirm;
     if (!this.submitPatchNewPasswordProcessing && this.passwordValid) {
-      this.submitPatchNewPasswordProcessing = true;
-
-      try {
-        await this.$store.dispatch('ChangePassword/PATCH_NEW_PASSWORD', {
-          userPassword: userPassword,
-          userPasswordComfirm: userPasswordConfirm
-        });
-
-        alert('비밀번호 변경이 완료되었습니다.');
-        this.$router.push('/');
-
-        if (this.$store.getters['UserAuth/isLogin']) {
-          this.$store.dispatch('UserAuth/USER_LOGOUT');
-        }
-      } catch (error) {
-        console.dir(error);
-      } finally {
-        setTimeout(() => {
-          this.submitPatchNewPasswordProcessing = false;
-        }, 500);
-      }
+      commonAsync(
+        () => {
+          return this.$store.dispatch('ChangePassword/PATCH_NEW_PASSWORD', {
+            userPassword: userPassword,
+            userPasswordComfirm: userPasswordConfirm
+          });
+        },
+        () => {
+          alert('비밀번호 변경이 완료되었습니다.');
+          this.$router.push('/');
+        },
+        this.submitPatchNewPasswordProcessing
+      );
     }
   }
 }

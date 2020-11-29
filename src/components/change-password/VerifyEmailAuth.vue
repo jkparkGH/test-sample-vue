@@ -33,6 +33,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import commonAsync from '@/assets/js/commonAsync';
 
 @Component
 export default class VerifyEmailAuth extends Vue {
@@ -85,22 +86,18 @@ export default class VerifyEmailAuth extends Vue {
       !this.authCodeInvalid &&
       !this.isTimeOut
     ) {
-      this.submitVerifyAuthProcessing = true;
-
-      try {
-        await this.$store.dispatch(
-          'ChangePassword/VERIFY_EMAIL_AUTH',
-          this.authCode
-        );
-
-        this.$router.push('/change-password/patch');
-      } catch (error) {
-        console.dir(error);
-      } finally {
-        setTimeout(() => {
-          this.submitVerifyAuthProcessing = false;
-        }, 500);
-      }
+      commonAsync(
+        () => {
+          return this.$store.dispatch(
+            'ChangePassword/VERIFY_EMAIL_AUTH',
+            this.authCode
+          );
+        },
+        () => {
+          this.$router.push('/change-password/patch');
+        },
+        this.submitVerifyAuthProcessing
+      );
     }
   }
 
