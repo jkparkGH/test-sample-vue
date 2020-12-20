@@ -64,7 +64,7 @@ export default class UserInfoList extends Vue.extend({
 
   isLoginValid() {
     if (!this.isLogin) {
-      alert('Login이 필요합니다');
+      alert('로그인이 필요합니다');
       this.$router.push('/login');
     } else {
       this.GET_USER_INFO;
