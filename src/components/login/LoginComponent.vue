@@ -7,7 +7,6 @@
           placeholder="Email 주소를 입력해 주세요"
           v-model="userEmail"
           @keyup="validEmailForInput"
-          title="ably452@dummy.com"
         />
         <p class="error-msg" v-show="userEmailInvalid">
           {{
